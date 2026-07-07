@@ -1,0 +1,19 @@
+# Maven build target
+backend/target/
+*.class
+
+# Log files
+*.log
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS metadata
+Thumbs.db
+desktop.ini

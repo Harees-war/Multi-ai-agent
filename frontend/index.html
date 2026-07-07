@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Multi-Agent Code Assistant</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Extra styles specific to index.html */
+        .landing-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 64px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+        }
+        @media(max-width: 768px) {
+            .landing-navbar {
+                padding: 24px;
+            }
+        }
+        .landing-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        .landing-logo i {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+        @media(max-width: 768px) {
+            .nav-links {
+                gap: 12px;
+            }
+            .nav-links .nav-link {
+                display: none;
+            }
+        }
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .nav-link:hover {
+            color: var(--text-color);
+        }
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 100vh;
+            padding: 120px 24px 80px 24px;
+            position: relative;
+        }
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            max-width: 800px;
+        }
+        @media(max-width: 768px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+        }
+        .hero-title span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-desc {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+        }
+        .features-section {
+            padding: 80px 64px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        @media(max-width: 768px) {
+            .features-section {
+                padding: 40px 24px;
+            }
+        }
+        .section-header-center {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-header-center h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+        .feature-card {
+            padding: 40px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+        .testimonials-section {
+            padding: 80px 64px;
+            background: rgba(0, 0, 0, 0.15);
+        }
+        @media(max-width: 768px) {
+            .testimonials-section {
+                padding: 40px 24px;
+            }
+        }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .testimonial-card {
+            padding: 24px;
+        }
+        .testimonial-quote {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .testimonial-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .testimonial-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+        .landing-footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Header Navbar -->
+    <header class="landing-navbar">
+        <a href="index.html" class="landing-logo">
+            <i class="fa-solid fa-brain"></i> AgenticCode
+        </a>
+        <nav class="nav-links">
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#testimonials" class="nav-link">Testimonials</a>
+            <a href="login.html" class="glass-btn glass-btn-secondary" style="padding: 8px 20px;">Log In</a>
+            <a href="signup.html" class="glass-btn" style="padding: 8px 20px;">Sign Up</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 class="hero-title">Supercharge Coding with <span>Multi-Agent AI</span> Collaboration</h1>
+        <p class="hero-desc">Create, review, optimize, and explain source code instantaneously using a team of intelligent specialized developer agents.</p>
+        <div class="hero-cta">
+            <a href="signup.html" class="glass-btn">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="#features" class="glass-btn glass-btn-secondary">Learn More</a>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="features-section">
+        <div class="section-header-center">
+            <h2>Three Dedicated AI Agents</h2>
+            <p style="color: var(--text-muted);">Collaborate with specialized developer models to maximize security and efficiency.</p>
+        </div>
+        <div class="features-grid">
+            <div class="glass-card feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-code"></i></div>
+                <h3>Code Generator</h3>
+                <p style="color: var(--text-muted); line-height: 1.5;">Describe your programming specifications and obtain modular, commented code immediately in Java, Python, C++, SQL, and more.</p>
+            </div>
+            <div class="glass-card feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3>Code Reviewer</h3>
+                <p style="color: var(--text-muted); line-height: 1.5;">Automatically scan pasted code snippets to identify potential execution bugs, security vulnerabilities, performant loops, and structural smells.</p>
+            </div>
+            <div class="glass-card feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-book"></i></div>
+                <h3>Code Explainer</h3>
+                <p style="color: var(--text-muted); line-height: 1.5;">Receive detailed line-by-line analyses, structural flow algorithms, algorithmic time/space complexities, and beginner-friendly analogical stories.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="testimonials-section">
+        <div class="section-header-center">
+            <h2>What Developers Say</h2>
+        </div>
+        <div class="testimonials-grid">
+            <div class="glass-card testimonial-card">
+                <p class="testimonial-quote">"The Code Reviewer saved me hours of manual testing. It discovered a memory leak vulnerability within seconds!"</p>
+                <div class="testimonial-user">
+                    <div class="testimonial-avatar">A</div>
+                    <div>
+                        <h4 style="font-size: 0.9rem;">Alex Carter</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Software Engineer</p>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card testimonial-card">
+                <p class="testimonial-quote">"The Explainer is fantastic. Having line-by-line code reviews makes onboarding new graduates so much easier."</p>
+                <div class="testimonial-user">
+                    <div class="testimonial-avatar">M</div>
+                    <div>
+                        <h4 style="font-size: 0.9rem;">Maria Zhou</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Engineering Manager</p>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card testimonial-card">
+                <p class="testimonial-quote">"Perfect glassmorphic UI. Having access to multiple code agents in a clean dashboard feels like cheating."</p>
+                <div class="testimonial-user">
+                    <div class="testimonial-avatar">J</div>
+                    <div>
+                        <h4 style="font-size: 0.9rem;">Jason Miller</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Full-Stack Developer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <p>&copy; 2026 AgenticCode Inc. Built with Spring Boot and Vanilla Web APIs.</p>
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

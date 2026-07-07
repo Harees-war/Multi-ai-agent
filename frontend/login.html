@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In - AgenticCode</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="animated-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="auth-wrapper">
+        <div class="glass-card auth-card fade-in">
+            <div class="auth-header">
+                <h1>Welcome Back</h1>
+                <p>Enter your details to access your coding assistant</p>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="glass-input" placeholder="name@domain.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="password" class="glass-input" placeholder="••••••••" required>
+                        <button type="button" id="toggle-pw-btn" class="toggle-password">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="auth-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember-me"> Remember me
+                    </label>
+                    <a href="#" class="forgot-password" onclick="alert('Password reset link has been simulated!')">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="glass-btn" style="width: 100%;">
+                    Log In <i class="fa-solid fa-right-to-bracket"></i>
+                </button>
+            </form>
+
+            <div class="oauth-divider">or continue with</div>
+
+            <div class="oauth-buttons">
+                <button class="oauth-btn" onclick="alert('Google Login is not configured in this demo version')">
+                    <i class="fa-brands fa-google"></i> Google
+                </button>
+                <button class="oauth-btn" onclick="alert('GitHub Login is not configured in this demo version')">
+                    <i class="fa-brands fa-github"></i> GitHub
+                </button>
+            </div>
+
+            <div class="auth-footer">
+                Don't have an account? <a href="signup.html">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/validation.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('login-form');
+            const pwInput = document.getElementById('password');
+            const togglePwBtn = document.getElementById('toggle-pw-btn');
+
+            if (togglePwBtn) {
+                togglePwBtn.addEventListener('click', () => {
+                    const isPw = pwInput.type === 'password';
+                    pwInput.type = isPw ? 'text' : 'password';
+                    togglePwBtn.innerHTML = isPw ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
+                });
+            }
+
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('email').value.trim();
+                    const password = pwInput.value;
+
+                    if (!validation.validateEmail(email)) {
+                        utils.showToast('Please enter a valid email address', 'error');
+                        return;
+                    }
+
+                    try {
+                        utils.showLoader();
+                        const data = await api.post('/auth/login', { email, password });
+                        
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify({
+                            id: data.id,
+                            name: data.name,
+                            email: data.email,
+                            role: data.role
+                        }));
+
+                        utils.showToast(`Welcome back, ${data.name}!`, 'success');
+                        
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1000);
+
+                    } catch (err) {
+                        utils.showToast(err.message || 'Login failed. Please verify credentials.', 'error');
+                    } finally {
+                        utils.hideLoader();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

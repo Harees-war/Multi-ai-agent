@@ -1,0 +1,48 @@
+/* theme.css */
+:root, .dark-theme {
+    /* Dark Theme Variables (Default) */
+    --bg-gradient: radial-gradient(circle at 10% 20%, #1e1e24 0%, #121214 90%);
+    --text-color: #f1f2f6;
+    --text-muted: #a4b0be;
+    
+    --glass-bg: rgba(30, 30, 40, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --card-border: rgba(255, 255, 255, 0.05);
+    --card-border-hover: rgba(255, 255, 255, 0.15);
+    --card-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+    --card-hover-shadow: 0 8px 30px 0 rgba(0, 0, 0, 0.4);
+    
+    --accent-color: #6c5ce7;
+    --accent-rgb: 108, 92, 231;
+    --accent-gradient: linear-gradient(135deg, #6c5ce7 0%, #a8a5ff 100%);
+    
+    --nav-active: rgba(108, 92, 231, 0.15);
+    --nav-hover: rgba(255, 255, 255, 0.05);
+}
+
+.light-theme {
+    /* Light Theme Variables */
+    --bg-gradient: radial-gradient(circle at 10% 20%, #f5f6fa 0%, #e8ecf2 90%);
+    --text-color: #2f3542;
+    --text-muted: #747d8c;
+    
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    
+    --card-bg: rgba(255, 255, 255, 0.45);
+    --card-border: rgba(0, 0, 0, 0.05);
+    --card-border-hover: rgba(0, 0, 0, 0.15);
+    --card-shadow: 0 4px 20px 0 rgba(31, 38, 135, 0.05);
+    --card-hover-shadow: 0 8px 30px 0 rgba(31, 38, 135, 0.15);
+    
+    --accent-color: #5352ed;
+    --accent-rgb: 83, 82, 237;
+    --accent-gradient: linear-gradient(135deg, #5352ed 0%, #8258ff 100%);
+    
+    --nav-active: rgba(83, 82, 237, 0.1);
+    --nav-hover: rgba(0, 0, 0, 0.03);
+}

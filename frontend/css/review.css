@@ -1,0 +1,38 @@
+/* review.css */
+@import url('generate.css');
+
+/* Review reports results layout */
+.report-section {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.report-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.report-section-header.bug { color: #ff4757; }
+.report-section-header.security { color: #ffa502; }
+.report-section-header.perf { color: #2ed573; }
+.report-section-header.best-practice { color: #1e90ff; }
+.report-section-header.opt-code { color: #2ed573; }
+
+.report-body {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.report-body ul {
+    list-style-position: inside;
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}

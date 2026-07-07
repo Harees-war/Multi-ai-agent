@@ -1,0 +1,129 @@
+/* generate.css */
+/* Generator layout wrapper */
+.generator-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    height: calc(100vh - 160px);
+}
+
+@media(max-width: 992px) {
+    .generator-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+}
+
+.input-panel, .output-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.panel-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.panel-controls {
+    display: flex;
+    gap: 12px;
+}
+
+.input-area-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.requirement-textarea {
+    width: 100%;
+    flex: 1;
+    min-height: 250px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 16px;
+    color: var(--text-color);
+    outline: none;
+    resize: none;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    transition: border-color 0.3s ease;
+}
+
+.requirement-textarea:focus {
+    border-color: var(--accent-color);
+}
+
+.char-counter {
+    position: absolute;
+    bottom: 12px;
+    right: 16px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Glowing output code terminal style */
+.code-terminal {
+    flex: 1;
+    background: #0f1015;
+    border: 1px solid #1f2335;
+    border-radius: 12px;
+    padding: 16px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    color: #a9b1d6;
+    position: relative;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+}
+
+.code-terminal pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.6;
+}
+
+.code-actions-top {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.code-terminal:hover .code-actions-top {
+    opacity: 1;
+}
+
+.terminal-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #a9b1d6;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.terminal-btn:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+}

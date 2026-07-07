@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - AgenticCode</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/signup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="animated-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="auth-wrapper">
+        <div class="glass-card auth-card fade-in">
+            <div class="auth-header">
+                <h1>Create Account</h1>
+                <p>Register to unlock multi-agent code tools</p>
+            </div>
+
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" class="glass-input" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="glass-input" placeholder="name@domain.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="glass-input" placeholder="Min. 6 characters" required>
+                    <div class="strength-meter">
+                        <div id="strength-bar" class="strength-bar"></div>
+                    </div>
+                    <span id="strength-label" class="strength-label">Password strength</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" class="glass-input" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="glass-btn" style="width: 100%; margin-top: 10px;">
+                    Sign Up <i class="fa-solid fa-user-plus"></i>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="login.html">Log In</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/validation.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('signup-form');
+            const pwInput = document.getElementById('password');
+            const confirmPwInput = document.getElementById('confirm-password');
+            const strengthBar = document.getElementById('strength-bar');
+            const strengthLabel = document.getElementById('strength-label');
+
+            if (pwInput && strengthBar && strengthLabel) {
+                pwInput.addEventListener('input', () => {
+                    const strength = validation.calculatePasswordStrength(pwInput.value);
+                    strengthBar.style.width = `${strength.score}%`;
+                    strengthBar.style.background = strength.color;
+                    strengthLabel.textContent = `Strength: ${strength.label}`;
+                    strengthLabel.style.color = strength.color;
+                });
+            }
+
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('name').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const password = pwInput.value;
+                    const confirmPassword = confirmPwInput.value;
+
+                    if (!validation.validateEmail(email)) {
+                        utils.showToast('Please enter a valid email address', 'error');
+                        return;
+                    }
+
+                    if (password.length < 6) {
+                        utils.showToast('Password must be at least 6 characters long', 'error');
+                        return;
+                    }
+
+                    if (password !== confirmPassword) {
+                        utils.showToast('Passwords do not match!', 'error');
+                        return;
+                    }
+
+                    try {
+                        utils.showLoader();
+                        await api.post('/auth/signup', { name, email, password });
+                        
+                        utils.showToast('Registration successful! Redirecting to login...', 'success');
+                        
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1500);
+
+                    } catch (err) {
+                        utils.showToast(err.message || 'Registration failed. Try again.', 'error');
+                    } finally {
+                        utils.hideLoader();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

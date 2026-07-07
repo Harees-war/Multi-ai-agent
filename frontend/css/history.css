@@ -1,0 +1,113 @@
+/* history.css */
+.history-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.search-wrapper {
+    position: relative;
+    max-width: 300px;
+    width: 100%;
+}
+
+.search-wrapper input {
+    width: 100%;
+    padding-left: 40px;
+}
+
+.search-wrapper i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.history-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.history-table th, .history-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.history-table th {
+    font-weight: 600;
+    color: var(--text-color);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.history-table tr:hover {
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge.generator { background: rgba(108, 92, 231, 0.15); color: #6c5ce7; }
+.badge.reviewer { background: rgba(0, 184, 148, 0.15); color: #00b894; }
+.badge.explainer { background: rgba(9, 132, 227, 0.15); color: #0984e3; }
+
+.action-icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+.action-icon-btn:hover {
+    color: #ff4757;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.page-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-color);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: var(--accent-gradient);
+    color: white;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - AgenticCode</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="animated-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar glass-panel">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-brain"></i> AgenticCode
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="sidebar-menu-item">
+                    <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="generate.html"><i class="fa-solid fa-code"></i> Code Generator</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="review.html"><i class="fa-solid fa-shield-halved"></i> Code Reviewer</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="explain.html"><i class="fa-solid fa-book"></i> Code Explainer</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="history.html"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+                </li>
+                <li class="sidebar-menu-item active">
+                    <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+                </li>
+            </ul>
+
+            <ul class="sidebar-menu" style="margin-top: auto;">
+                <li class="sidebar-menu-item">
+                    <a href="#" onclick="auth.logout()"><i class="fa-solid fa-right-from-bracket" style="color: #ff4757;"></i> Log Out</a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <header class="top-navbar glass-panel">
+                <div class="page-title-area">
+                    <h2 style="font-size: 1.25rem; font-weight: 700;">My Profile</h2>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Manage your profile credentials and statistics</p>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="icon-btn" onclick="theme.toggle()" title="Toggle Dark/Light Mode">
+                        <i class="fa-solid fa-circle-half-stroke"></i>
+                    </button>
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" alt="Profile" class="user-avatar">
+                </div>
+            </header>
+
+            <!-- Profile Content layout -->
+            <section class="profile-container">
+                <!-- Left profile card -->
+                <div class="glass-card profile-card">
+                    <div class="profile-avatar-wrapper">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="profile-avatar">
+                        <div class="avatar-edit-btn" onclick="alert('Image upload not active in demo mode')">
+                            <i class="fa-solid fa-camera"></i>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-group">
+                        <h3 class="profile-name user-name-display">Developer</h3>
+                        <span class="profile-role">Developer</span>
+                        <span id="profile-joined-heading" class="profile-meta">Joined ...</span>
+                    </div>
+
+                    <div class="profile-stats-grid">
+                        <div class="profile-stat-box">
+                            <span id="stat-total-requests" class="profile-stat-value">0</span>
+                            <span class="profile-stat-label">Total Requests</span>
+                        </div>
+                        <div class="profile-stat-box">
+                            <span id="stat-code-gens" class="profile-stat-value">0</span>
+                            <span class="profile-stat-label">Generations</span>
+                        </div>
+                        <div class="profile-stat-box" style="margin-top: 12px;">
+                            <span id="stat-code-reviews" class="profile-stat-value">0</span>
+                            <span class="profile-stat-label">Reviews</span>
+                        </div>
+                        <div class="profile-stat-box" style="margin-top: 12px;">
+                            <span id="stat-code-explains" class="profile-stat-value">0</span>
+                            <span class="profile-stat-label">Explanations</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right profile edit form -->
+                <div class="glass-card profile-form-card">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--glass-border);">
+                        Edit Profile Details
+                    </h3>
+
+                    <form id="profile-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="edit-name">Full Name</label>
+                                <input type="text" id="edit-name" class="glass-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-email">Email Address</label>
+                                <input type="email" id="profile-email" class="glass-input" readonly style="opacity: 0.7; cursor: not-allowed;">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 10px;">
+                            <label>Member Since</label>
+                            <span id="joined-date" style="font-size: 0.95rem; font-weight: 500; display: block; padding: 12px 0;">...</span>
+                        </div>
+
+                        <h3 style="font-size: 1.1rem; font-weight: 600; margin-top: 32px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--glass-border);">
+                            Update Password
+                        </h3>
+
+                        <div class="form-group">
+                            <label for="current-password">Current Password</label>
+                            <input type="password" id="current-password" class="glass-input" placeholder="••••••••">
+                        </div>
+
+                        <div class="form-grid" style="margin-top: 10px;">
+                            <div class="form-group">
+                                <label for="new-password">New Password</label>
+                                <input type="password" id="new-password" class="glass-input" placeholder="Min. 6 characters">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-new-password">Confirm New Password</label>
+                                <input type="password" id="confirm-new-password" class="glass-input" placeholder="••••••••">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="glass-btn" style="margin-top: 24px; float: right;">
+                            Save Changes <i class="fa-solid fa-floppy-disk"></i>
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>
