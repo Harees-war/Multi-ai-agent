@@ -132,58 +132,231 @@ public class AiService {
     }
 
     private String getMockResponse(String promptText) {
-        if (promptText.contains("senior code reviewer")) {
-            return "### Bug Detection\n" +
-                    "1. **Null Pointer Exception**: The input code does not check if the parameter is null before accessing properties.\n" +
-                    "2. **Type Safety Warning**: Operations are being conducted on generic structures without safe validation checks.\n\n" +
-                    "### Security Issues\n" +
-                    "- **Input Sanitization Missing**: External strings must be sanitized to prevent code injection attacks.\n" +
-                    "- **Improper Error Handling**: Internal exception StackTraces are being output to standard channels, which reveals structural configurations.\n\n" +
-                    "### Performance Suggestions\n" +
-                    "- Cache recurring loops to prevent redundant memory allocations.\n" +
-                    "- Use built-in libraries which compile into low-overhead assembly constructs.\n\n" +
-                    "### Best Practices & Code Smells\n" +
-                    "- Refactor long conditionals into separate boolean functions.\n" +
-                    "- Rename single-character variables to descriptive identifiers.\n\n" +
-                    "### Optimized Code\n" +
-                    "```javascript\n" +
-                    "// Optimized and Secure version\n" +
-                    "function processInputData(inputString) {\n" +
-                    "    if (!inputString || typeof inputString !== 'string') {\n" +
-                    "        throw new Error('Invalid input exception');\n" +
+        String lowerPrompt = promptText.toLowerCase();
+        
+        // Extract language from system prompt instruction
+        String lang = "javascript"; // fallback
+        if (lowerPrompt.contains("language: java") || lowerPrompt.contains("in java")) lang = "java";
+        else if (lowerPrompt.contains("language: python") || lowerPrompt.contains("in python")) lang = "python";
+        else if (lowerPrompt.contains("language: c++") || lowerPrompt.contains("in c++")) lang = "cpp";
+        else if (lowerPrompt.contains("language: html") || lowerPrompt.contains("in html")) lang = "html";
+        else if (lowerPrompt.contains("language: css") || lowerPrompt.contains("in css")) lang = "css";
+        else if (lowerPrompt.contains("language: sql") || lowerPrompt.contains("in sql")) lang = "sql";
+
+        if (lowerPrompt.contains("senior code reviewer")) {
+            return getMockReviewReport(lang);
+        } else if (lowerPrompt.contains("programming tutor")) {
+            return getMockExplanationReport(lang);
+        } else {
+            return getMockGeneratedCode(lang, lowerPrompt);
+        }
+    }
+
+    private String getMockReviewReport(String lang) {
+        return "### Bug Detection\n" +
+                "1. **Syntax Warnings**: Found minor stylistic issues corresponding to " + lang.toUpperCase() + " standard setups.\n" +
+                "2. **Type Coercion Risk**: Ensure dynamic comparisons are properly validated.\n\n" +
+                "### Security Issues\n" +
+                "- **Unsanitized Variable Scans**: Ensure user parameters are checked against boundary constraints.\n\n" +
+                "### Performance Suggestions\n" +
+                "- Avoid unnecessary object allocation loops inside iterative conditions.\n\n" +
+                "### Best Practices & Code Smells\n" +
+                "- Refactor code structures into standalone, single-purpose functions.\n\n" +
+                "### Optimized Code\n" +
+                "```" + lang + "\n" +
+                "// Optimized " + lang.toUpperCase() + " version\n" +
+                getGenericCodeSnippet(lang) + "\n" +
+                "```";
+    }
+
+    private String getMockExplanationReport(String lang) {
+        return "### Line-by-Line Explanation\n" +
+                "- **Line 1**: Declares the execution block in " + lang.toUpperCase() + ".\n" +
+                "- **Line 2**: Initializes variables and baseline counters.\n" +
+                "- **Line 3**: Implements iterative loops to process input fields.\n\n" +
+                "### Flow and Algorithms\n" +
+                "The algorithm processes the input sequence line-by-line and applies data filters before returning the calculated value.\n\n" +
+                "### Complexity Analysis\n" +
+                "- **Time Complexity**: \\(O(N)\\) linear runtime scanning inputs.\n" +
+                "- **Space Complexity**: \\(O(1)\\) constant storage allocations.\n\n" +
+                "### Real-World Example\n" +
+                "Like a ticket counter checker scanning one passenger ticket at a time in sequence.\n\n" +
+                "### Summary\n" +
+                "A clean utility code block written in " + lang.toUpperCase() + ".";
+    }
+
+    private String getMockGeneratedCode(String lang, String prompt) {
+        if (prompt.contains("factorial")) {
+            if (lang.equals("java")) {
+                return "```java\n" +
+                        "// Java program to calculate factorial\n" +
+                        "public class FactorialUtility {\n" +
+                        "    public static long getFactorial(int n) {\n" +
+                        "        if (n <= 1) return 1;\n" +
+                        "        return n * getFactorial(n - 1);\n" +
+                        "    }\n" +
+                        "}\n" +
+                        "```";
+            } else if (lang.equals("python")) {
+                return "```python\n" +
+                        "# Python program to calculate factorial\n" +
+                        "def get_factorial(n):\n" +
+                        "    if n <= 1:\n" +
+                        "        return 1\n" +
+                        "    return n * get_factorial(n - 1)\n" +
+                        "```";
+            } else if (lang.equals("sql")) {
+                return "```sql\n" +
+                        "-- SQL query (Simulated Factorial logic using CTE)\n" +
+                        "WITH RECURSIVE FactorialCTE AS (\n" +
+                        "    SELECT 1 AS n, 1 AS fact\n" +
+                        "    UNION ALL\n" +
+                        "    SELECT n + 1, (n + 1) * fact FROM FactorialCTE WHERE n < 10\n" +
+                        ")\n" +
+                        "SELECT * FROM FactorialCTE;\n" +
+                        "```";
+            } else {
+                return "```javascript\n" +
+                        "// JavaScript function to calculate factorial\n" +
+                        "function getFactorial(n) {\n" +
+                        "    if (n <= 1) return 1;\n" +
+                        "    return n * getFactorial(n - 1);\n" +
+                        "}\n" +
+                        "```";
+            }
+        } else if (prompt.contains("prime")) {
+            if (lang.equals("java")) {
+                return "```java\n" +
+                        "// Java check if a number is prime\n" +
+                        "public class PrimeCheck {\n" +
+                        "    public static boolean isPrime(int n) {\n" +
+                        "        if (n <= 1) return false;\n" +
+                        "        for (int i = 2; i <= Math.sqrt(n); i++) {\n" +
+                        "            if (n % i == 0) return false;\n" +
+                        "        }\n" +
+                        "        return true;\n" +
+                        "    }\n" +
+                        "}\n" +
+                        "```";
+            } else if (lang.equals("python")) {
+                return "```python\n" +
+                        "# Python check prime function\n" +
+                        "import math\n" +
+                        "def is_prime(n):\n" +
+                        "    if n <= 1:\n" +
+                        "        return False\n" +
+                        "    for i in range(2, int(math.sqrt(n)) + 1):\n" +
+                        "        if n % i == 0:\n" +
+                        "            return False\n" +
+                        "    return True\n" +
+                        "```";
+            } else {
+                return "```javascript\n" +
+                        "// JavaScript function to check prime\n" +
+                        "function isPrime(n) {\n" +
+                        "    if (n <= 1) return false;\n" +
+                        "    for (let i = 2; i <= Math.sqrt(n); i++) {\n" +
+                        "        if (n % i === 0) return false;\n" +
+                        "    }\n" +
+                        "    return true;\n" +
+                        "}\n" +
+                        "```";
+            }
+        } else if (prompt.contains("fibonacci")) {
+            if (lang.equals("java")) {
+                return "```java\n" +
+                        "// Java Fibonacci sequence generator\n" +
+                        "import java.util.ArrayList;\n" +
+                        "public class Fibonacci {\n" +
+                        "    public static ArrayList<Integer> generate(int count) {\n" +
+                        "        ArrayList<Integer> seq = new ArrayList<>();\n" +
+                        "        if (count <= 0) return seq;\n" +
+                        "        seq.add(0);\n" +
+                        "        if (count == 1) return seq;\n" +
+                        "        seq.add(1);\n" +
+                        "        while (seq.size() < count) {\n" +
+                        "            seq.add(seq.get(seq.size() - 1) + seq.get(seq.size() - 2));\n" +
+                        "        }\n" +
+                        "        return seq;\n" +
+                        "    }\n" +
+                        "}\n" +
+                        "```";
+            } else if (lang.equals("python")) {
+                return "```python\n" +
+                        "# Python Fibonacci function\n" +
+                        "def generate_fibonacci(count):\n" +
+                        "    if count <= 0: return []\n" +
+                        "    if count == 1: return [0]\n" +
+                        "    seq = [0, 1]\n" +
+                        "    while len(seq) < count:\n" +
+                        "        seq.append(seq[-1] + seq[-2])\n" +
+                        "    return seq\n" +
+                        "```";
+            } else {
+                return "```javascript\n" +
+                        "// JavaScript Fibonacci generator\n" +
+                        "function generateFibonacci(count) {\n" +
+                        "    if (count <= 0) return [];\n" +
+                        "    if (count === 1) return [0];\n" +
+                        "    const seq = [0, 1];\n" +
+                        "    while (seq.length < count) {\n" +
+                        "        seq.push(seq[seq.length - 1] + seq[seq.length - 2]);\n" +
+                        "    }\n" +
+                        "    return seq;\n" +
+                        "}\n" +
+                        "```";
+            }
+        }
+
+        // Standard default templates based on language
+        return getGenericCodeSnippet(lang);
+    }
+
+    private String getGenericCodeSnippet(String lang) {
+        if (lang.equals("java")) {
+            return "```java\n" +
+                    "// Standard Java Utility\n" +
+                    "public class HelperUtility {\n" +
+                    "    public static void execute() {\n" +
+                    "        System.out.println(\"Completed action inside utility\");\n" +
                     "    }\n" +
-                    "    const sanitized = inputString.replace(/[^a-zA-Z0-9 ]/g, '');\n" +
-                    "    return sanitized.trim().toLowerCase();\n" +
                     "}\n" +
                     "```";
-        } else if (promptText.contains("programming tutor")) {
-            return "### Line-by-Line Explanation\n" +
-                    "- **Line 1 (`function processInputData(...)`)**: Declares a new function that takes `inputString` as its argument.\n" +
-                    "- **Line 2 (`if (!inputString...)`)**: Validates input boundaries to guard against `null`, `undefined`, or non-string parameters.\n" +
-                    "- **Line 5 (`const sanitized = ...`)**: Applies a regular expression filter to strip out special character symbols.\n" +
-                    "- **Line 6 (`return sanitized...`)**: Removes leading/trailing spaces and converts characters to lowercase before outputting.\n\n" +
-                    "### Flow and Algorithms\n" +
-                    "The function uses a guard clause to handle invalid cases immediately, then processes the data using string manipulation filters in a linear sequence.\n\n" +
-                    "### Complexity Analysis\n" +
-                    "- **Time Complexity**: \\(O(N)\\) where \\(N\\) is the length of `inputString` (due to Regex filtering scan).\n" +
-                    "- **Space Complexity**: \\(O(N)\\) to store the sanitized intermediate results in memory.\n\n" +
-                    "### Real-World Example\n" +
-                    "Imagine a mailbox at a post office: first, it rejects anything that is not a standard envelope (Guard Clause). Next, it wipes off any mud or sticker tags from the envelope (Regex Sanitizer). Finally, it puts an official lowercase postmark on it and drops it in the bin (Return Output).\n\n" +
-                    "### Summary\n" +
-                    "A secure string sanitizer function utilizing standard regular expressions and defensive checking logic.";
+        } else if (lang.equals("python")) {
+            return "```python\n" +
+                    "# Standard Python Script\n" +
+                    "def execute():\n" +
+                    "    print(\"Completed action inside utility\")\n" +
+                    "\n" +
+                    "execute()\n" +
+                    "```";
+        } else if (lang.equals("sql")) {
+            return "```sql\n" +
+                    "-- Standard SQL Query\n" +
+                    "SELECT id, username, email FROM users WHERE role = 'USER';\n" +
+                    "```";
+        } else if (lang.equals("html")) {
+            return "```html\n" +
+                    "<!-- Standard HTML template -->\n" +
+                    "<div class=\"container\">\n" +
+                    "    <h1>Project Multi-Agent Helper</h1>\n" +
+                    "    <p>Rendering mock content panel</p>\n" +
+                    "</div>\n" +
+                    "```";
+        } else if (lang.equals("css")) {
+            return "```css\n" +
+                    "/* Standard CSS rules */\n" +
+                    ".container {\n" +
+                    "    display: flex;\n" +
+                    "    justify-content: center;\n" +
+                    "    background: rgba(255,255,255,0.05);\n" +
+                    "}\n" +
+                    "```";
         } else {
             return "```javascript\n" +
-                    "// Generated code based on requirement\n" +
-                    "function generateFibonacci(n) {\n" +
-                    "    if (n <= 0) return [];\n" +
-                    "    if (n === 1) return [0];\n" +
-                    "    \n" +
-                    "    const sequence = [0, 1];\n" +
-                    "    while (sequence.length < n) {\n" +
-                    "        const nextVal = sequence[sequence.length - 1] + sequence[sequence.length - 2];\n" +
-                    "        sequence.push(nextVal);\n" +
-                    "    }\n" +
-                    "    return sequence;\n" +
+                    "// Standard JavaScript helper\n" +
+                    "function execute() {\n" +
+                    "    console.log(\"Completed action inside utility\");\n" +
                     "}\n" +
                     "```";
         }
