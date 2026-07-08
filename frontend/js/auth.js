@@ -40,3 +40,14 @@ const auth = {
 
 // Run automatically on load
 auth.checkSession();
+
+// Load custom profile avatar if stored locally
+document.addEventListener('DOMContentLoaded', () => {
+    const savedAvatar = localStorage.getItem('user_avatar');
+    if (savedAvatar) {
+        const avatars = document.querySelectorAll('.user-avatar, .profile-avatar');
+        avatars.forEach(img => {
+            img.src = savedAvatar;
+        });
+    }
+});

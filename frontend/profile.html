@@ -77,9 +77,10 @@
                 <div class="glass-card profile-card">
                     <div class="profile-avatar-wrapper">
                         <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="profile-avatar">
-                        <div class="avatar-edit-btn" onclick="alert('Image upload not active in demo mode')">
+                        <div class="avatar-edit-btn" id="avatarEditBtn">
                             <i class="fa-solid fa-camera"></i>
                         </div>
+                        <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
                     </div>
 
                     <div class="profile-info-group">

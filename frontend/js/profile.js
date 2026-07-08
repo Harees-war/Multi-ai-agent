@@ -101,5 +101,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // Avatar upload setup
+    const avatarEditBtn = document.getElementById('avatarEditBtn');
+    const avatarFileInput = document.getElementById('avatarFileInput');
+
+    if (avatarEditBtn && avatarFileInput) {
+        avatarEditBtn.addEventListener('click', () => {
+            avatarFileInput.click();
+        });
+
+        avatarFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) { // Limit size to 2MB
+                    utils.showToast('Image file size must be less than 2MB', 'error');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const base64String = event.target.result;
+                    localStorage.setItem('user_avatar', base64String);
+                    
+                    // Update all avatar images on the page immediately
+                    const avatars = document.querySelectorAll('.user-avatar, .profile-avatar');
+                    avatars.forEach(img => {
+                        img.src = base64String;
+                    });
+                    
+                    utils.showToast('Profile picture updated successfully!', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
     loadUserProfile();
 });
