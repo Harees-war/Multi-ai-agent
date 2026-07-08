@@ -133,6 +133,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                 reader.readAsDataURL(file);
             }
         });
+
+        const deleteAvatarBtn = document.getElementById('deleteAvatarBtn');
+        if (deleteAvatarBtn) {
+            deleteAvatarBtn.addEventListener('click', () => {
+                const defaultAvatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80";
+                
+                if (!localStorage.getItem('user_avatar')) {
+                    utils.showToast('You do not have a custom profile picture to remove!', 'error');
+                    return;
+                }
+                
+                localStorage.removeItem('user_avatar');
+                
+                // Revert all avatar images to default
+                const avatars = document.querySelectorAll('.user-avatar, .profile-avatar');
+                avatars.forEach(img => {
+                    img.src = defaultAvatar;
+                });
+                
+                utils.showToast('Profile picture removed successfully!', 'success');
+            });
+        }
     }
 
     loadUserProfile();
