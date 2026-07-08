@@ -37,6 +37,7 @@ public class AiService {
 
     public String generateCode(String email, String language, String requirement) {
         String systemInstruction = "You are a professional software engineer. Generate clean, modular, and optimized code. " +
+                "Do not include any code comments, inline comments, or documentation comments within the generated code. The code must be completely free of comments. " +
                 "Language: " + language + ". Requirement: " + requirement + ". Return only the code inside Markdown code blocks. Do not add explanations or surrounding discussion.";
         
         String response = callGemini(systemInstruction);
@@ -210,7 +211,6 @@ public class AiService {
         if (prompt.contains("factorial")) {
             if (lang.equals("java")) {
                 return "```java\n" +
-                        "// Java program to calculate factorial\n" +
                         "public class FactorialUtility {\n" +
                         "    public static long getFactorial(int n) {\n" +
                         "        if (n <= 1) return 1;\n" +
@@ -220,7 +220,6 @@ public class AiService {
                         "```";
             } else if (lang.equals("python")) {
                 return "```python\n" +
-                        "# Python program to calculate factorial\n" +
                         "def get_factorial(n):\n" +
                         "    if n <= 1:\n" +
                         "        return 1\n" +
@@ -228,7 +227,6 @@ public class AiService {
                         "```";
             } else if (lang.equals("sql")) {
                 return "```sql\n" +
-                        "-- SQL query (Simulated Factorial logic using CTE)\n" +
                         "WITH RECURSIVE FactorialCTE AS (\n" +
                         "    SELECT 1 AS n, 1 AS fact\n" +
                         "    UNION ALL\n" +
@@ -238,7 +236,6 @@ public class AiService {
                         "```";
             } else {
                 return "```javascript\n" +
-                        "// JavaScript function to calculate factorial\n" +
                         "function getFactorial(n) {\n" +
                         "    if (n <= 1) return 1;\n" +
                         "    return n * getFactorial(n - 1);\n" +
@@ -248,7 +245,6 @@ public class AiService {
         } else if (prompt.contains("prime")) {
             if (lang.equals("java")) {
                 return "```java\n" +
-                        "// Java check if a number is prime\n" +
                         "public class PrimeCheck {\n" +
                         "    public static boolean isPrime(int n) {\n" +
                         "        if (n <= 1) return false;\n" +
@@ -261,7 +257,6 @@ public class AiService {
                         "```";
             } else if (lang.equals("python")) {
                 return "```python\n" +
-                        "# Python check prime function\n" +
                         "import math\n" +
                         "def is_prime(n):\n" +
                         "    if n <= 1:\n" +
@@ -273,7 +268,6 @@ public class AiService {
                         "```";
             } else {
                 return "```javascript\n" +
-                        "// JavaScript function to check prime\n" +
                         "function isPrime(n) {\n" +
                         "    if (n <= 1) return false;\n" +
                         "    for (let i = 2; i <= Math.sqrt(n); i++) {\n" +
@@ -286,7 +280,6 @@ public class AiService {
         } else if (prompt.contains("fibonacci")) {
             if (lang.equals("java")) {
                 return "```java\n" +
-                        "// Java Fibonacci sequence generator\n" +
                         "import java.util.ArrayList;\n" +
                         "public class Fibonacci {\n" +
                         "    public static ArrayList<Integer> generate(int count) {\n" +
@@ -304,7 +297,6 @@ public class AiService {
                         "```";
             } else if (lang.equals("python")) {
                 return "```python\n" +
-                        "# Python Fibonacci function\n" +
                         "def generate_fibonacci(count):\n" +
                         "    if count <= 0: return []\n" +
                         "    if count == 1: return [0]\n" +
@@ -315,7 +307,6 @@ public class AiService {
                         "```";
             } else {
                 return "```javascript\n" +
-                        "// JavaScript Fibonacci generator\n" +
                         "function generateFibonacci(count) {\n" +
                         "    if (count <= 0) return [];\n" +
                         "    if (count === 1) return [0];\n" +
@@ -329,14 +320,12 @@ public class AiService {
             }
         }
 
-        // Standard default templates based on language
         return getGenericCodeSnippet(lang);
     }
 
     private String getGenericCodeSnippet(String lang) {
         if (lang.equals("java")) {
             return "```java\n" +
-                    "// Standard Java Utility\n" +
                     "public class HelperUtility {\n" +
                     "    public static void execute() {\n" +
                     "        System.out.println(\"Completed action inside utility\");\n" +
@@ -345,7 +334,6 @@ public class AiService {
                     "```";
         } else if (lang.equals("python")) {
             return "```python\n" +
-                    "# Standard Python Script\n" +
                     "def execute():\n" +
                     "    print(\"Completed action inside utility\")\n" +
                     "\n" +
@@ -353,12 +341,10 @@ public class AiService {
                     "```";
         } else if (lang.equals("sql")) {
             return "```sql\n" +
-                    "-- Standard SQL Query\n" +
                     "SELECT id, username, email FROM users WHERE role = 'USER';\n" +
                     "```";
         } else if (lang.equals("html")) {
             return "```html\n" +
-                    "<!-- Standard HTML template -->\n" +
                     "<div class=\"container\">\n" +
                     "    <h1>Project Multi-Agent Helper</h1>\n" +
                     "    <p>Rendering mock content panel</p>\n" +
@@ -366,7 +352,6 @@ public class AiService {
                     "```";
         } else if (lang.equals("css")) {
             return "```css\n" +
-                    "/* Standard CSS rules */\n" +
                     ".container {\n" +
                     "    display: flex;\n" +
                     "    justify-content: center;\n" +
@@ -375,7 +360,6 @@ public class AiService {
                     "```";
         } else {
             return "```javascript\n" +
-                    "// Standard JavaScript helper\n" +
                     "function execute() {\n" +
                     "    console.log(\"Completed action inside utility\");\n" +
                     "}\n" +
