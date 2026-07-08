@@ -88,47 +88,68 @@ public class AiService {
             return getMockResponse(promptText);
         }
 
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+        String[] models = {
+            "gemini-2.5-flash",
+            "gemini-2.0-flash",
+            "gemini-flash-latest",
+            "gemini-pro-latest"
+        };
 
-            Map<String, Object> requestBody = new HashMap<>();
-            
-            Map<String, Object> textPart = new HashMap<>();
-            textPart.put("text", promptText);
-            
-            Map<String, Object> partContainer = new HashMap<>();
-            partContainer.put("parts", Collections.singletonList(textPart));
-            
-            requestBody.put("contents", Collections.singletonList(partContainer));
+        Exception lastException = null;
 
-            HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
-            String url = apiUrl + "?key=" + apiKey;
+        for (int attempt = 0; attempt < models.length; attempt++) {
+            String currentModel = models[attempt];
+            try {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
 
-            ResponseEntity<Map> responseEntity = restTemplate.postForEntity(url, request, Map.class);
-            if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
-                Map body = responseEntity.getBody();
-                List candidates = (List) body.get("candidates");
-                if (candidates != null && !candidates.isEmpty()) {
-                    Map firstCandidate = (Map) candidates.get(0);
-                    Map content = (Map) firstCandidate.get("content");
-                    if (content != null) {
-                        List parts = (List) content.get("parts");
-                        if (parts != null && !parts.isEmpty()) {
-                            Map firstPart = (Map) parts.get(0);
-                            return (String) firstPart.get("text");
+                Map<String, Object> requestBody = new HashMap<>();
+                Map<String, Object> textPart = new HashMap<>();
+                textPart.put("text", promptText);
+                Map<String, Object> partContainer = new HashMap<>();
+                partContainer.put("parts", Collections.singletonList(textPart));
+                requestBody.put("contents", Collections.singletonList(partContainer));
+
+                HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+                String url = "https://generativelanguage.googleapis.com/v1beta/models/" + currentModel + ":generateContent?key=" + apiKey;
+
+                logger.info("Calling Gemini API with model: " + currentModel + " (Attempt " + (attempt + 1) + ")");
+                ResponseEntity<Map> responseEntity = restTemplate.postForEntity(url, request, Map.class);
+                
+                if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
+                    Map body = responseEntity.getBody();
+                    List candidates = (List) body.get("candidates");
+                    if (candidates != null && !candidates.isEmpty()) {
+                        Map firstCandidate = (Map) candidates.get(0);
+                        Map content = (Map) firstCandidate.get("content");
+                        if (content != null) {
+                            List parts = (List) content.get("parts");
+                            if (parts != null && !parts.isEmpty()) {
+                                Map firstPart = (Map) parts.get(0);
+                                return (String) firstPart.get("text");
+                            }
                         }
                     }
                 }
+                throw new RuntimeException("Unexpected response format from Gemini API");
+            } catch (Exception e) {
+                lastException = e;
+                logger.warn("Attempt " + (attempt + 1) + " failed for model " + currentModel + ": " + e.getMessage());
+                if (attempt < models.length - 1) {
+                    try {
+                        Thread.sleep(800); // Delay before trying next fallback model
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
             }
-            throw new RuntimeException("Unexpected response format from Gemini API");
-        } catch (Exception e) {
-            logger.error("Error calling Gemini API: " + e.getMessage(), e);
-            return "### Error calling Gemini API\n" +
-                    "An error occurred: " + e.getMessage() + "\n\n" +
-                    "#### Here is a simulated response:\n" +
-                    getMockResponse(promptText);
         }
+
+        logger.error("All Gemini API fallback models failed. Last exception: " + lastException.getMessage(), lastException);
+        return "### Error calling Gemini API\n" +
+                "An error occurred: " + lastException.getMessage() + "\n\n" +
+                "#### Here is a simulated response:\n" +
+                getMockResponse(promptText);
     }
 
     private String getMockResponse(String promptText) {
