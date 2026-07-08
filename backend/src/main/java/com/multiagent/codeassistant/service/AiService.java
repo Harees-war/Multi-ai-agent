@@ -49,11 +49,12 @@ public class AiService {
         String systemInstruction = "You are a senior code reviewer. Review this " + language + " code:\n\n" + code + "\n\n" +
                 "Return a detailed report in Markdown format with the following headings:\n" +
                 "### Bug Detection\n" +
+                "For every identified bug or compile error, you MUST explicitly list the Line Number, the exact code line content containing the error, a description of the issue, and provide a corrected version code block directly inside this section for that bug.\n" +
                 "### Security Issues\n" +
                 "### Performance Suggestions\n" +
                 "### Best Practices & Code Smells\n" +
                 "### Optimized Code\n" +
-                "(Include the optimized code inside Markdown blocks)";
+                "Include the fully corrected and optimized version of the program inside Markdown code blocks.";
 
         String response = callGemini(systemInstruction);
         saveHistory(email, "Reviewer", language, code.length() > 100 ? code.substring(0, 100) + "..." : code, response);
@@ -176,8 +177,20 @@ public class AiService {
 
     private String getMockReviewReport(String lang) {
         return "### Bug Detection\n" +
-                "1. **Syntax Warnings**: Found minor stylistic issues corresponding to " + lang.toUpperCase() + " standard setups.\n" +
-                "2. **Type Coercion Risk**: Ensure dynamic comparisons are properly validated.\n\n" +
+                "1. **Potential Null Reference Exception (Line 2)**\n" +
+                "   - **Line Content**: `if (input.equals(\"\"))`\n" +
+                "   - **Issue**: Calling `.equals()` on `input` without checking if `input` is `null` first can cause a NullPointerException.\n" +
+                "   - **Corrected Code**:\n" +
+                "     ```" + lang + "\n" +
+                "     if (input == null || input.equals(\"\"))\n" +
+                "     ```\n" +
+                "2. **Type Coercion Warning (Line 5)**\n" +
+                "   - **Line Content**: `if (count == \"0\")`\n" +
+                "   - **Issue**: Comparing numeric variable `count` to string value `\"0\"` may cause coercion errors.\n" +
+                "   - **Corrected Code**:\n" +
+                "     ```" + lang + "\n" +
+                "     if (count == 0)\n" +
+                "     ```\n\n" +
                 "### Security Issues\n" +
                 "- **Unsanitized Variable Scans**: Ensure user parameters are checked against boundary constraints.\n\n" +
                 "### Performance Suggestions\n" +
