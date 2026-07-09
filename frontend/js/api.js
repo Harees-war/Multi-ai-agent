@@ -1,5 +1,10 @@
 // api.js
-const API_BASE_URL = 'http://localhost:8080/api';
+// Set this to your deployed backend URL in production (e.g., 'https://my-backend-app.railway.app/api')
+const PRODUCTION_API_URL = ''; 
+
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+    ? 'http://localhost:8080/api'
+    : (PRODUCTION_API_URL || `${window.location.origin}/api`);
 
 const api = {
     async request(endpoint, options = {}) {
