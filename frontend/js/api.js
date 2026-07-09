@@ -1,6 +1,6 @@
 // api.js
 // Set this to your deployed backend URL in production (e.g., 'https://my-backend-app.railway.app/api')
-const PRODUCTION_API_URL = ''; 
+const PRODUCTION_API_URL = 'https://multi-ai-agent-nshe.onrender.com/api'; 
 
 const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
     ? 'http://localhost:8080/api'
