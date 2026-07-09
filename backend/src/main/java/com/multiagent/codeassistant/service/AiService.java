@@ -148,8 +148,20 @@ public class AiService {
         }
 
         logger.error("All Gemini API fallback models failed. Last exception: " + lastException.getMessage(), lastException);
-        return "### Error calling Gemini API\n" +
-                "An error occurred: " + lastException.getMessage() + "\n\n" +
+        
+        String errorMessage = lastException.getMessage() != null ? lastException.getMessage() : "";
+        String userFriendlyErrorHeader = "### ⚠️ API Connection Issue\n" +
+                "Could not complete request to Gemini API. Reverting to local fallback mode.\n\n";
+
+        if (errorMessage.contains("429") || errorMessage.contains("RESOURCE_EXHAUSTED")) {
+            userFriendlyErrorHeader = "### ⚠️ API Quota Exceeded (Rate Limit)\n" +
+                    "You have exceeded the request quota for the Gemini API free tier. Please wait a few seconds before retrying.\n\n";
+        } else if (errorMessage.contains("503") || errorMessage.contains("UNAVAILABLE")) {
+            userFriendlyErrorHeader = "### ⚠️ Gemini Service Overloaded\n" +
+                    "Google's Gemini servers are currently experiencing high traffic. Reverting to local fallback mode.\n\n";
+        }
+
+        return userFriendlyErrorHeader +
                 "#### Here is a simulated response:\n" +
                 getMockResponse(promptText);
     }
