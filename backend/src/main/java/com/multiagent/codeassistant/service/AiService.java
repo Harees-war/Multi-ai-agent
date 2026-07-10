@@ -19,11 +19,14 @@ public class AiService {
 
     private static final Logger logger = LoggerFactory.getLogger(AiService.class);
 
-    @Value("${gemini.api.key:}")
+    @Value("${openrouter.api.key:}")
     private String apiKey;
 
-    @Value("${gemini.api.url}")
+    @Value("${openrouter.api.url}")
     private String apiUrl;
+
+    @Value("${openrouter.api.model}")
+    private String apiModel;
 
     private final UserRepository userRepository;
     private final HistoryRepository historyRepository;
@@ -40,7 +43,7 @@ public class AiService {
                 "Do not include any code comments, inline comments, or documentation comments within the generated code. The code must be completely free of comments. " +
                 "Language: " + language + ". Requirement: " + requirement + ". Return only the code inside Markdown code blocks. Do not add explanations or surrounding discussion.";
         
-        String response = callGemini(systemInstruction);
+        String response = callOpenRouter(systemInstruction);
         saveHistory(email, "Generator", language, requirement, response);
         return response;
     }
@@ -56,7 +59,7 @@ public class AiService {
                 "### Optimized Code\n" +
                 "Include the fully corrected and optimized version of the program inside Markdown code blocks.";
 
-        String response = callGemini(systemInstruction);
+        String response = callOpenRouter(systemInstruction);
         saveHistory(email, "Reviewer", language, code.length() > 100 ? code.substring(0, 100) + "..." : code, response);
         return response;
     }
@@ -72,7 +75,7 @@ public class AiService {
                 "### Real-World Example\n" +
                 "### Summary";
 
-        String response = callGemini(systemInstruction);
+        String response = callOpenRouter(systemInstruction);
         saveHistory(email, "Explainer", language, code.length() > 100 ? code.substring(0, 100) + "..." : code, response);
         return response;
     }
@@ -84,86 +87,67 @@ public class AiService {
         historyRepository.save(history);
     }
 
-    private String callGemini(String promptText) {
+    private String callOpenRouter(String promptText) {
         if (apiKey == null || apiKey.trim().isEmpty() || apiKey.startsWith("${")) {
-            logger.warn("GEMINI_API_KEY is not configured. Returning fallback mock response.");
+            logger.warn("OPENROUTER_API_KEY is not configured. Returning fallback mock response.");
             return getMockResponse(promptText);
         }
 
-        String[] models = {
-            "gemini-2.5-flash",
-            "gemini-2.0-flash",
-            "gemini-flash-latest",
-            "gemini-pro-latest"
-        };
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Bearer " + apiKey);
+            headers.set("HTTP-Referer", "http://localhost:8080");
+            headers.set("X-Title", "AI Multi-Agent Code Assistant");
 
-        Exception lastException = null;
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("model", apiModel);
+            requestBody.put("max_tokens", 2000);
 
-        for (int attempt = 0; attempt < models.length; attempt++) {
-            String currentModel = models[attempt];
-            try {
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
+            List<Map<String, String>> messages = new ArrayList<>();
+            Map<String, String> userMessage = new HashMap<>();
+            userMessage.put("role", "user");
+            userMessage.put("content", promptText);
+            messages.add(userMessage);
 
-                Map<String, Object> requestBody = new HashMap<>();
-                Map<String, Object> textPart = new HashMap<>();
-                textPart.put("text", promptText);
-                Map<String, Object> partContainer = new HashMap<>();
-                partContainer.put("parts", Collections.singletonList(textPart));
-                requestBody.put("contents", Collections.singletonList(partContainer));
+            requestBody.put("messages", messages);
 
-                HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
-                String url = "https://generativelanguage.googleapis.com/v1beta/models/" + currentModel + ":generateContent?key=" + apiKey;
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
 
-                logger.info("Calling Gemini API with model: " + currentModel + " (Attempt " + (attempt + 1) + ")");
-                ResponseEntity<Map> responseEntity = restTemplate.postForEntity(url, request, Map.class);
-                
-                if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
-                    Map body = responseEntity.getBody();
-                    List candidates = (List) body.get("candidates");
-                    if (candidates != null && !candidates.isEmpty()) {
-                        Map firstCandidate = (Map) candidates.get(0);
-                        Map content = (Map) firstCandidate.get("content");
-                        if (content != null) {
-                            List parts = (List) content.get("parts");
-                            if (parts != null && !parts.isEmpty()) {
-                                Map firstPart = (Map) parts.get(0);
-                                return (String) firstPart.get("text");
-                            }
-                        }
-                    }
-                }
-                throw new RuntimeException("Unexpected response format from Gemini API");
-            } catch (Exception e) {
-                lastException = e;
-                logger.warn("Attempt " + (attempt + 1) + " failed for model " + currentModel + ": " + e.getMessage());
-                if (attempt < models.length - 1) {
-                    try {
-                        Thread.sleep(800); // Delay before trying next fallback model
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
+            logger.info("Calling OpenRouter API with model: " + apiModel);
+            ResponseEntity<Map> responseEntity = restTemplate.postForEntity(apiUrl, request, Map.class);
+            
+            if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
+                Map body = responseEntity.getBody();
+                List choices = (List) body.get("choices");
+                if (choices != null && !choices.isEmpty()) {
+                    Map firstChoice = (Map) choices.get(0);
+                    Map message = (Map) firstChoice.get("message");
+                    if (message != null) {
+                        return (String) message.get("content");
                     }
                 }
             }
+            throw new RuntimeException("Unexpected response format from OpenRouter API");
+        } catch (Exception e) {
+            logger.error("OpenRouter API call failed: " + e.getMessage(), e);
+            
+            String errorMessage = e.getMessage() != null ? e.getMessage() : "";
+            String userFriendlyErrorHeader = "### ⚠️ API Connection Issue\n" +
+                    "Could not complete request to OpenRouter API. Reverting to local fallback mode.\n\n";
+
+            if (errorMessage.contains("429") || errorMessage.contains("RESOURCE_EXHAUSTED")) {
+                userFriendlyErrorHeader = "### ⚠️ API Quota Exceeded (Rate Limit)\n" +
+                        "You have exceeded your OpenRouter API request quota. Please wait a few seconds before retrying.\n\n";
+            } else if (errorMessage.contains("503") || errorMessage.contains("UNAVAILABLE")) {
+                userFriendlyErrorHeader = "### ⚠️ OpenRouter Service Overloaded\n" +
+                        "OpenRouter servers are currently experiencing high traffic. Reverting to local fallback mode.\n\n";
+            }
+
+            return userFriendlyErrorHeader +
+                    "#### Here is a simulated response:\n" +
+                    getMockResponse(promptText);
         }
-
-        logger.error("All Gemini API fallback models failed. Last exception: " + lastException.getMessage(), lastException);
-        
-        String errorMessage = lastException.getMessage() != null ? lastException.getMessage() : "";
-        String userFriendlyErrorHeader = "### ⚠️ API Connection Issue\n" +
-                "Could not complete request to Gemini API. Reverting to local fallback mode.\n\n";
-
-        if (errorMessage.contains("429") || errorMessage.contains("RESOURCE_EXHAUSTED")) {
-            userFriendlyErrorHeader = "### ⚠️ API Quota Exceeded (Rate Limit)\n" +
-                    "You have exceeded the request quota for the Gemini API free tier. Please wait a few seconds before retrying.\n\n";
-        } else if (errorMessage.contains("503") || errorMessage.contains("UNAVAILABLE")) {
-            userFriendlyErrorHeader = "### ⚠️ Gemini Service Overloaded\n" +
-                    "Google's Gemini servers are currently experiencing high traffic. Reverting to local fallback mode.\n\n";
-        }
-
-        return userFriendlyErrorHeader +
-                "#### Here is a simulated response:\n" +
-                getMockResponse(promptText);
     }
 
     private String getMockResponse(String promptText) {
